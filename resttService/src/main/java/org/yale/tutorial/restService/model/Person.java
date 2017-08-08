@@ -3,7 +3,6 @@ package org.yale.tutorial.restService.model;
 import java.util.Date;
 
 public class Person {
-	
 	Name name;
 	Address address;
 	String phoneNo;
@@ -40,6 +39,6 @@ public class Person {
 	public void setNote(String note) {
 		Note = note;
 	}
-	
-
 }
+
+

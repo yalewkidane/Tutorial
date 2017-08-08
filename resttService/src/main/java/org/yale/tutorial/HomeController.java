@@ -4,10 +4,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.yale.tutorial.restService.crude.Crud;
@@ -31,16 +34,17 @@ public class HomeController {
 		
 		List<String> serviceList=new ArrayList<>();
 		
-		serviceList.add("service url: service/addAddressBook");
-		serviceList.add("service url: service/editAddressBook");
-		serviceList.add("service url: service/viewAddressBook");
-		serviceList.add("service url: service/deleteAddressBook");
+		serviceList.add("service url: service/addAddressBook;");
+		serviceList.add("service url: service/editAddressBook;");
+		serviceList.add("service url: service/viewALLAddressBook;");
+		serviceList.add("service url: service/viewAddressBook/{firstName};");
+		serviceList.add("service url: service/deleteAddressBook;");
 		
 		return new ResponseEntity<String>(serviceList.toString(), responseHeaders, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "service/viewAddressBook", method = RequestMethod.GET)
-	public ResponseEntity<String> viewAddressBook() {
+	@RequestMapping(value = "service/viewAllAddressBook", method = RequestMethod.GET)
+	public ResponseEntity<String> viewAllAddressBook() {
 		
 		System.out.println("getServiceList");
 
@@ -52,48 +56,45 @@ public class HomeController {
 		return new ResponseEntity<String>(result, responseHeaders, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "service/addAddressBook", method = RequestMethod.POST)
-	public ResponseEntity<String> addAddressBook() {
+	@RequestMapping(value = "service/viewAddressBook/{firstName}", method = RequestMethod.GET)
+	public ResponseEntity<String> viewAddressBook(@PathVariable String firstName) {
 		
 		System.out.println("getServiceList");
 
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		//new Crud
+		String result=Crud.view(firstName);
 		
-		List<String> serviceList=new ArrayList<>();
-		
-		
-		return new ResponseEntity<String>(serviceList.toString(), responseHeaders, HttpStatus.OK);
+		return new ResponseEntity<String>(result, responseHeaders, HttpStatus.OK);
 	}
 	
-	
-	
-	
-	@RequestMapping(value = "service/getServiceList/rt", method = RequestMethod.GET)
-	public ResponseEntity<String> getServiceList2() throws UnknownHostException {
+	@RequestMapping(value = "service/addAddressBook", method = RequestMethod.POST)
+	public ResponseEntity<String> addAddressBook(@RequestBody String body) {
 		
-		
-		// connect to mongo server 
-		MongoClient mongo = new MongoClient("localhost", 27017); // create a blank database 
-		DB db = mongo.getDB("kode12"); //displaystatistics 
-		System.out.println(db.getStats()); 
-		//DBCollection coll = db.createCollection("mycol", (DBObject) db);
-		DBCollection coll = db.getCollection("mycol");
-		BasicDBObject doc = new BasicDBObject("title", "MongoDB")
-				.append("description", "database")
-				.append("likes", 100)
-				.append("url", "http://www.tutorialspoint.com/mongodb/")
-				.append("by", "tutorials point");
-		coll.insert(doc);
 		System.out.println("getServiceList");
 
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		
+		String result=Crud.save(body);
 		
-		String serviceList = "Texting";
 		
-		return new ResponseEntity<String>(serviceList, responseHeaders, HttpStatus.OK);
+		return new ResponseEntity<String>(result, responseHeaders, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "service/deleteAddressBook", method = RequestMethod.DELETE)
+	public ResponseEntity<String> deleteAddressBook() {
+		
+		System.out.println("getServiceList");
+
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		
+		String result=Crud.delete();
+		
+		
+		return new ResponseEntity<String>(result, responseHeaders, HttpStatus.OK);
 	}
 	
 }
